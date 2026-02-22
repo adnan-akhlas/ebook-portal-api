@@ -8,6 +8,7 @@ export async function addBook(
   next: NextFunction,
 ): Promise<void> {
   // const {} = req.body;
+  console.log("files", req.files);
   try {
     res
       .status(httpStatus.CREATED)

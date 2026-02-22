@@ -6,6 +6,9 @@ interface IEnv {
   NODE_ENV: string;
   BCRYPT_SALT: string;
   JWT_SECRET: string;
+  CLOUDINARY_CLOUD_NAME: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
 }
 
 type ENV_KEYS = keyof IEnv;
@@ -16,6 +19,9 @@ const REQUIRED_ENV: ENV_KEYS[] = [
   "NODE_ENV",
   "BCRYPT_SALT",
   "JWT_SECRET",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
 ];
 
 const loadEnv = (): IEnv => {
