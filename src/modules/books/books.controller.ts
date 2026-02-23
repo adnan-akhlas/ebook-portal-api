@@ -202,7 +202,9 @@ export async function getBooks(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const books = await BookModel.find({});
+    const books = await BookModel.find({})
+      .populate("author", "name -_id")
+      .select("-coverImagePublicId -filePublicId");
     res.json({ message: "Books retrieved successfully.", data: books });
   } catch (error: unknown) {
     return next(error);
@@ -216,7 +218,9 @@ export async function getBook(
 ): Promise<void> {
   try {
     const { id } = req.params;
-    const book = await BookModel.findById(id);
+    const book = await BookModel.findById(id)
+      .populate("author", "name -_id")
+      .select("-coverImagePublicId -filePublicId");
     if (!book) {
       const error = createHttpError(httpStatus.NOT_FOUND, "Book not found.");
       return next(error);
