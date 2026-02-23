@@ -36,7 +36,7 @@ export async function addBook(
       coverImageFilePath,
       {
         filename_override: coverImageFileName,
-        folder: "book_covers",
+        folder: "ebook_portal/book_covers",
         format: "webp",
         resource_type: "image",
         overwrite: true,
@@ -71,7 +71,7 @@ export async function addBook(
         use_filename: true,
         unique_filename: true,
         overwrite: true,
-        folder: "book_pdfs",
+        folder: "ebook_portal/book_pdfs",
       },
     );
 
@@ -139,7 +139,7 @@ export async function updateBook(
           resource_type: "image",
           use_filename: true,
           unique_filename: true,
-          folder: "book_covers",
+          folder: "ebook_portal/book_covers",
           overwrite: true,
           transformation: [{ quality: "auto" }],
         },
@@ -167,7 +167,7 @@ export async function updateBook(
         resource_type: "raw",
         unique_filename: true,
         use_filename: true,
-        folder: "book_pdfs",
+        folder: "ebook_portal/book_pdfs",
         format: "pdf",
         overwrite: true,
       });
