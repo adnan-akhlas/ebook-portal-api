@@ -9,6 +9,7 @@ interface IEnv {
   CLOUDINARY_CLOUD_NAME: string;
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_API_SECRET: string;
+  FRONTEND_URL: string;
 }
 
 type ENV_KEYS = keyof IEnv;
@@ -22,6 +23,7 @@ const REQUIRED_ENV: ENV_KEYS[] = [
   "CLOUDINARY_CLOUD_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
+  "FRONTEND_URL",
 ];
 
 const loadEnv = (): IEnv => {
