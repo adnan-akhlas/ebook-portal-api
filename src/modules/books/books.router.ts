@@ -1,6 +1,6 @@
 import path from "node:path";
 import { Router } from "express";
-import { addBook } from "./books.controller";
+import { addBook, updateBook } from "./books.controller";
 import multer from "multer";
 import { auth } from "../../middleware/auth.middleware";
 
@@ -12,13 +12,23 @@ const upload = multer({
 const BookRouter = Router();
 
 BookRouter.post(
-  "/add-book",
+  "/",
   auth,
   upload.fields([
     { name: "coverImage", maxCount: 1 },
     { name: "file", maxCount: 1 },
   ]),
   addBook,
+);
+
+BookRouter.put(
+  "/:id",
+  auth,
+  upload.fields([
+    { name: "coverImage", maxCount: 1 },
+    { name: "file", maxCount: 1 },
+  ]),
+  updateBook,
 );
 
 export default BookRouter;

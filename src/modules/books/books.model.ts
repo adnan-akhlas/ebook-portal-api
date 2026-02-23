@@ -9,13 +9,22 @@ const BookSchema = new Schema<IBook>(
     },
     author: {
       type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     coverImage: {
       type: String,
       required: true,
     },
+    coverImagePublicId: {
+      type: String,
+      required: true,
+    },
     file: {
+      type: String,
+      required: true,
+    },
+    filePublicId: {
       type: String,
       required: true,
     },

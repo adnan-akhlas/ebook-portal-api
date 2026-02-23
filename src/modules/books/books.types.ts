@@ -6,7 +6,9 @@ export interface IBook {
   author: User | string;
   genre: string;
   coverImage: string;
+  coverImagePublicId: string;
   file: string;
+  filePublicId: string;
   createdAt: Date;
   updatedAt: Date;
 }
