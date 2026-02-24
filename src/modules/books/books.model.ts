@@ -3,7 +3,20 @@ import { IBook } from "./books.types";
 
 const BookSchema = new Schema<IBook>(
   {
+    slug: {
+      type: String,
+      required: true,
+    },
     title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    genre: {
       type: String,
       required: true,
     },
@@ -25,10 +38,6 @@ const BookSchema = new Schema<IBook>(
       required: true,
     },
     filePublicId: {
-      type: String,
-      required: true,
-    },
-    genre: {
       type: String,
       required: true,
     },

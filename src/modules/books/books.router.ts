@@ -28,7 +28,7 @@ BookRouter.post(
 );
 
 BookRouter.put(
-  "/:id",
+  "/:slug",
   auth,
   upload.fields([
     { name: "coverImage", maxCount: 1 },
@@ -39,8 +39,8 @@ BookRouter.put(
 
 BookRouter.get("/", getBooks);
 
-BookRouter.get("/:id", getBook);
+BookRouter.get("/:slug", getBook);
 
-BookRouter.delete("/:id", auth, deleteBook);
+BookRouter.delete("/:slug", auth, deleteBook);
 
 export default BookRouter;

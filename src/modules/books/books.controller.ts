@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import cloudinary from "../../config/cloudinary.config";
 import { BookModel } from "./books.model";
+import { generateSlug } from "../../utils/generateSlug";
 
 export async function addBook(
   req: Request,
@@ -12,7 +13,7 @@ export async function addBook(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { title, genre } = req.body;
+    const { title, description, genre } = req.body;
     const userId = req.user.sub as string;
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     const coverImageFile = files?.coverImage?.[0];
@@ -79,7 +80,9 @@ export async function addBook(
     await fs.promises.unlink(coverImageFilePath);
 
     const newBook = await BookModel.create({
+      slug: generateSlug(title),
       title,
+      description,
       genre,
       coverImage: imageFileUploadResult.secure_url,
       coverImagePublicId: imageFileUploadResult.public_id,
@@ -90,7 +93,7 @@ export async function addBook(
 
     res
       .status(httpStatus.CREATED)
-      .json({ message: "Book added successfully.", bookId: newBook.id });
+      .json({ message: "Book added successfully.", bookId: newBook.slug });
   } catch (error: unknown) {
     console.log(error);
     next(error);
@@ -103,12 +106,12 @@ export async function updateBook(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { title, genre } = req.body;
-    const { id } = req.params;
+    const { title, description, genre } = req.body;
+    const { slug } = req.params;
     const userId = req.user.sub as string;
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    const book = await BookModel.findById(id);
+    const book = await BookModel.findOne({ slug: slug as string });
 
     if (!book) {
       const error = createHttpError(httpStatus.NOT_FOUND, "Book not found.");
@@ -182,14 +185,19 @@ export async function updateBook(
     const updateBook = {
       title: title || book.title,
       genre: genre || book.genre,
+      description: description || book.description,
       coverImage: image,
       coverImagePublicId: imagePublicId,
       file: pdf,
       filePublicId: pdfPublicId,
     };
-    const newBook = await BookModel.findOneAndUpdate({ id }, updateBook, {
-      new: true,
-    }).select("-_id");
+    const newBook = await BookModel.findOneAndUpdate(
+      { slug: slug as string },
+      updateBook,
+      {
+        new: true,
+      },
+    ).select("-_id");
     res.json({ message: "Book updated successfully.", data: newBook });
   } catch (error: unknown) {
     return next(error);
@@ -204,7 +212,7 @@ export async function getBooks(
   try {
     const books = await BookModel.find({})
       .populate("author", "name -_id")
-      .select("-coverImagePublicId -filePublicId");
+      .select("-_id -coverImagePublicId -filePublicId");
     res.json({ message: "Books retrieved successfully.", data: books });
   } catch (error: unknown) {
     return next(error);
@@ -217,10 +225,10 @@ export async function getBook(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { id } = req.params;
-    const book = await BookModel.findById(id)
+    const { slug } = req.params;
+    const book = await BookModel.findOne({ slug: slug as string })
       .populate("author", "name -_id")
-      .select("-coverImagePublicId -filePublicId");
+      .select("-_id -coverImagePublicId -filePublicId");
     if (!book) {
       const error = createHttpError(httpStatus.NOT_FOUND, "Book not found.");
       return next(error);
@@ -237,9 +245,9 @@ export async function deleteBook(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { id } = req.params;
+    const { slug } = req.params;
     const userId = req.user.sub as string;
-    const book = await BookModel.findById(id);
+    const book = await BookModel.findOne({ slug: slug as string });
     if (!book) {
       const error = createHttpError(httpStatus.NOT_FOUND, "Book not found.");
       return next(error);
@@ -251,7 +259,7 @@ export async function deleteBook(
       );
       return next(error);
     }
-    await BookModel.findByIdAndDelete(id);
+    await BookModel.findOneAndDelete({ slug: slug as string });
     await cloudinary.uploader.destroy(book.coverImagePublicId, {
       resource_type: "image",
       invalidate: true,
