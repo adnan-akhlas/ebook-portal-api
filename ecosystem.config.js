@@ -1,4 +1,4 @@
-exports = {
+module.exports = {
   apps: [
     {
       name: "eBook Portal api",

@@ -29,17 +29,18 @@ COPY package.json .
 
 ENV NODE_ENV="production"
 
-RUN pnpm install --frozen
+RUN pnpm install --frozen-lockfile
 
 COPY --from=builder /app/dist ./dist
 
-RUN chown -R node:node /app && chown -R 755 /app
+RUN chown -R node:node /app
+RUN chmod -R 755 /app
 
 RUN pnpm add -g pm2
 
 COPY ecosystem.config.js .
 
-USER Node
+USER node
 
 EXPOSE 8080
 
